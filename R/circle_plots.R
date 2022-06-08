@@ -117,25 +117,25 @@ ggsave('docs/circleplot.png', width = 7, height = 4, units="in", dpi=300)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 df1 <- df %>% filter(year == 2016)
 
-df %>% 
+df<-df %>% 
   mutate(
     x = if_else(name == 'Stain', 5, 0), 
     x = if_else(name == 'Taste', 4, x), 
     x = if_else(name == 'Odor',  3, x), 
     x = if_else(name == 'Color', 2, x), 
     x = if_else(name == 'Particles', 1, x), 
-    x = if_else(year == 2016, x+0.1, x-0.1)
-  ) %>% 
-  ggplot() +
+    x = if_else(year == 2016, x+0.1, x-0.1),
+    period = if_else(year == 2016, "Pre-extension", "Post-extension")) 
+
+ggplot(df) + 
   geom_segment(
     aes(x=x, xend = x, y=0, yend=prop), 
     col="grey", 
     size = 1.3) +
   geom_point(
-    aes(x=x, y=prop, col=year),
-    size=4, 
-    col = c("#E57200", "#232D4B","#E57200", "#232D4B","#E57200", "#232D4B","#E57200", "#232D4B","#E57200", "#232D4B")
-  ) +
+    aes(x, prop, colour=factor(period)), 
+    size = 4) + 
+  scale_color_manual(values=c("#E57200", "#232D4B")) +  
   scale_x_continuous(
     breaks = c(1, 2, 3, 4, 5),
     labels=c('Particles', 'Color', 'Odor', 'Taste', 'Stain'), 
@@ -150,6 +150,9 @@ df %>%
     axis.title.x = element_text(size = 14),
     axis.text.y  = element_text(size = 10),
     axis.text.x  = element_text(size = 10), 
+    legend.position="bottom", 
+    legend.title = element_blank(),
+    legend.text = element_text(size=14)
   ) 
 
 ggsave('docs/circleplot2.png', width = 3.5, height = 4, units="in", dpi=300)
