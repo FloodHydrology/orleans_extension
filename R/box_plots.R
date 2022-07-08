@@ -64,11 +64,17 @@ df<-df %>%
 kruskal.test(df$Cl_ppm, df$year)
 kruskal.test(df$NA_ppm, df$year)
 
+#Prep labels for groups
+df<-df %>% 
+  mutate(period = if_else(year == 2016, "Pre-extension", "Post-extension")) 
+
+df$period <- factor(df$period, levels = c("Pre-extension", "Post-extension"))
+
 #Chloride
 cl<-df %>% 
-  ggplot(., aes(x=Groups, y=Cl_ppm, fill=year)) + 
+  ggplot(., aes(x=Groups, y=Cl_ppm, fill=period)) + 
   #Plot contents
-  geom_boxplot() + 
+  geom_boxplot(lwd=0.25) + 
   #Theme
   theme_bw()+
   #Color Options
@@ -89,9 +95,9 @@ cl<-df %>%
     legend.position = 'NONE') 
   
 na<-df %>% 
-  ggplot(., aes(x=Groups, y=NA_ppm, fill=year)) + 
+  ggplot(., aes(x=Groups, y=NA_ppm, fill=period)) + 
   #Plot contents
-  geom_boxplot() + 
+  geom_boxplot(lwd=0.25) + 
   #Theme
   theme_bw()+
   #Color Options
@@ -109,7 +115,7 @@ na<-df %>%
     axis.title.x = element_blank(),
     axis.text.y  = element_text(size = 10),
     axis.text.x  = element_text(size = 10), 
-    legend.title = element_text(size = 10),
+    legend.title = element_blank(),
     legend.text = element_text(size=8),
     legend.position = "bottom"
   )+
