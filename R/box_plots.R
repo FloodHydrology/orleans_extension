@@ -66,68 +66,59 @@ kruskal.test(df$NA_ppm, df$year)
 
 #Chloride
 cl<-df %>% 
-  ggplot(., aes(x=Groups, y=Cl_ppm, fill=interaction(Groups, year))) + 
+  ggplot(., aes(x=Groups, y=Cl_ppm, fill=year)) + 
   #Plot contents
   geom_boxplot() + 
   #Theme
   theme_bw()+
   #Color Options
-  scale_fill_manual(values=c("#e31a1c","#ff7f00", "#1f78b4", "#e31a1c80" ,"#ff7f0080",  "#1f78b480")) +
+  scale_fill_manual(values=c("#E57200", "#232D4B","#E57200", "#232D4B","#E57200", "#232D4B")) +
   #Axes
-  scale_y_log10()+
-  ylab("Cl [ppm]") +
+  coord_cartesian(ylim=c(10,1000)) +
+  scale_y_log10(
+    breaks = c(10,100,1000),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  ylab(expression(Chloride~textstyle({'['})*mg%.%L^{-1}*textstyle({']'}))) +
   scale_x_discrete(labels=c("Salt Barn","Major Roads","Minor Roads")) +
   theme(
-    axis.title.y = element_text(size = 14), 
+    axis.title.y = element_text(size = 12), 
     axis.title.x = element_blank(),
     axis.text.y  = element_text(size = 10),
-    axis.text.x  = element_text(size = 10), 
-    legend.position = "none"
-  ) 
-
-#NA
+    axis.text.x  = element_text(size = 10),
+    legend.position = 'NONE') 
+  
 na<-df %>% 
-  ggplot(., aes(x=Groups, y=NA_ppm, fill=interaction(Groups, year))) + 
+  ggplot(., aes(x=Groups, y=NA_ppm, fill=year)) + 
   #Plot contents
   geom_boxplot() + 
   #Theme
   theme_bw()+
   #Color Options
-  scale_fill_manual(values=c("#e31a1c","#ff7f00", "#1f78b4", "#e31a1c80" ,"#ff7f0080",  "#1f78b480")) +
+  scale_fill_manual(values=c("#E57200", "#232D4B","#E57200", "#232D4B","#E57200", "#232D4B")) +
   #Axes
-  scale_y_log10()+
-  ylab("Na [ppm]") +
+  coord_cartesian(ylim=c(10,1000)) +
+  scale_y_log10(
+    breaks = c(10,100,1000),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  ylab(expression(Sodium~textstyle({'['})*mg%.%L^{-1}*textstyle({']'}))) +
   scale_x_discrete(labels=c("Salt Barn","Major Roads","Minor Roads")) +
   theme(
-    axis.title.y = element_text(size = 14), 
+    axis.title.y = element_text(size = 12), 
     axis.title.x = element_blank(),
     axis.text.y  = element_text(size = 10),
     axis.text.x  = element_text(size = 10), 
-    legend.position = "none"
-  ) 
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size=8),
+    legend.position = "bottom"
+  )+
+  guides(fill=guide_legend(title = "Sampling Year"))
 
-#Ratio
-ratio<-df %>% 
-  mutate(ratio = Cl_ppm/NA_ppm) %>% 
-  ggplot(., aes(x=Groups, y=ratio, fill=interaction(Groups, year))) + 
-  #Plot contents
-  geom_boxplot() + 
-  #Theme
-  theme_bw()+
-  #Color Options
-  scale_fill_manual(values=c("#e31a1c","#ff7f00", "#1f78b4", "#e31a1c80" ,"#ff7f0080",  "#1f78b480")) +
-  #Axes
-  ylab("Cl/Na Ratio") +
-  scale_x_discrete(labels=c("Salt Barn","Major Roads","Minor Roads")) +
-  theme(
-    axis.title.y = element_text(size = 14), 
-    axis.title.x = element_blank(),
-    axis.text.y  = element_text(size = 10),
-    axis.text.x  = element_text(size = 10), 
-    legend.position = "none"
-  ) 
 
 #Create plot
-cl + na + ratio + plot_layout(ncol=1)
-ggsave('docs/boxplot.png', width = 3.7, height = 7, units="in", dpi=300)
+cl + na + plot_layout(ncol=1) + 
+  plot_annotation(tag_levels = 'A', tag_suffix = ".)") &
+  theme(plot.tag = element_text(size = 12))
+ggsave('docs/boxplot.png', width = 4, height = 5, units="in", dpi=300)
   #https://floodhydrology.github.io/orleans_extension/boxplot.png
